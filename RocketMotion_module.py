@@ -115,9 +115,9 @@ acceleration_settings = dict(ROCKET=acceleration_settings_on_ROCKET)
 
     #SETUP MASS RATE
 # setup mass propagation
-MassRateSettings = dict(ROCKET=propagation_setup.mass_rate.from_thrust())
+MassRateSettings = dict(ROCKET=[propagation_setup.mass_rate.from_thrust()])
 
-print(type(MassRateSettings["ROCKET"]))
+
 
 #_____________________END OF FORCE MODELS_______________________#
 
@@ -135,7 +135,7 @@ dependent_variables_to_save = [
 
 CentralBody = [GlobalOrigin]
 
-# Set up accelerations propagations
+    # SETUP ACCELERATION PROPAGATIONS
 AccelerationModel = propagation_setup.create_acceleration_models(
     bodies,
     acceleration_settings,
@@ -151,12 +151,17 @@ PropagationSettings = propagation_setup.propagator.translational(CentralBody,
                                                                  output_variables=dependent_variables_to_save
                                                                  )
 
+    #SETUP MASS PORPAGATIONS
 "currently we haven't figured it out if we can use this function"
-"""MassPropagatorSettings = propagation_setup.propagator.mass(BodyToPropagate,
-                                                           MassRateSettings,
+MassRateModel = propagation_setup.create_mass_rate_models(bodies,
+                                                          MassRateSettings,
+                                                          AccelerationModel
+                                                          )
+MassPropagatorSettings = propagation_setup.propagator.mass(BodyToPropagate,
+                                                           MassRateModel,
                                                            OriginalRocketMass,
                                                            EndCondition
-                                                           )"""
+                                                           )
 
 
 ###SETUP NUMERICAL SIMULATION ###
