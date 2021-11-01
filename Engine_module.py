@@ -5,25 +5,59 @@ from tudatpy.kernel.numerical_simulation import environment_setup, environment
 import numpy as np
 
 ###IMPORT FROM OWN MODULES###
-from SetUp import EngineType, EngineSetUp, dt, T_force_const, t_burnout
+from SetUp import EngineType, EngineSetUp, Falcon_9_engine, t_max_simulation
 
-global EngineType, T_force_const, EngineSetUp, dt, t_burnout
+global EngineType, T_force_const, EngineSetUp, dt, Isp_const, Falcon_9_engine, t_max_simulation
 
+global m_flow_falcon9
+m_flow_falcon9 = (Falcon_9_engine['F_sl']/(Falcon_9_engine['isp_sl']*9.81) + Falcon_9_engine['F_vac']/(Falcon_9_engine['isp_vac']*9.81))/2
 
 ###VERSION 1###
-def Thrust_Size(time):
-    if time <= t_burnout:
-        return T_force_const
-    elif time > t_burnout:
+def Thrust_Size_Falcon9(time):
+    if time <= Falcon_9_engine["t_burnout"]:
+        T_force = (Falcon_9_engine['isp_vac']+Falcon_9_engine['isp_sl'])/2*m_flow_falcon9*9.81
+        return T_force
+    elif time > Falcon_9_engine["t_burnout"]:
         return 0.0
 
 
 def Thrust_Direction(time):
-    return np.array([[1], [0], [0]])
+    t = Falcon_9_engine["t_burnout"]
+    if time <= Falcon_9_engine["t_burnout"]:
+        x = np.sin(0.5*np.pi - (time/Falcon_9_engine["t_burnout"])*0.5*np.pi*Falcon_9_engine['turn_rate'])
+        y = np.cos(0.5*np.pi-0.5*np.pi*(time/Falcon_9_engine["t_burnout"])*Falcon_9_engine['turn_rate'])
+        y = min(y, 1)
+        x = max(0, x)
+    elif time > Falcon_9_engine["t_burnout"]:
+        x = np.sin(0.5*np.pi - 1*0.5*np.pi*Falcon_9_engine['turn_rate'])
+        y = np.cos(0.5*np.pi-0.5*np.pi*1*Falcon_9_engine['turn_rate'])
+    return np.array([[x], [y], [0]])
 
 
-def Isp_Function(time):
-    return 300
+def Isp_Function_Falcon9(time):
+    return (Falcon_9_engine['isp_vac']+Falcon_9_engine['isp_sl'])/2
+
+###VERSION 2 ###
+"""start working with class system such that thrust can be suth of when air speed is above a certain level"""
+
+
+class EngineThrustClass():
+
+    def __init__(self, body_to_accelerate : str,
+                 bodies : tudatpy.kernel.numerical_simulation.environment.SystemOfBodies,
+                 Thrust_magnitude : float,
+                 breakvelocity : float ):
+        self.Thrust_magnitude = Thrust_magnitude
+        self.vehicle_body = bodies.get_body(body_to_accelerate)
+        self.cutout_condition = breakvelocity
+
+    def Thrust_size_class(self, time : float):
+        airspeed = self.vehicle_body.flight_conditions.airspeed
+        if airspeed <= self.cutout_condition :
+            return self.Thrust_magnitude
+        if airspeed > self.cutout_condition:
+            return 0.0
+
 
 
 #### VERSION X###
