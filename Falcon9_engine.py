@@ -40,7 +40,7 @@ class Falcon9Engine:
         elif current_mass < self.Rocket_M_dry + self.prop_margin:
             return 0.0
 
-    def IspThrust(self, time):
+    def ISP_Magnitude(self, time):
         return self.ISP_level
 
     def Thrust_Guidance(self, time):
@@ -54,7 +54,8 @@ class Falcon9Engine:
         elif time > Falcon_9_engine["t_burnout"]:
             x = sin(0.5 * pi - 1 * 0.5 * pi * self.turn_rate)
             y = cos(0.5 * pi - 0.5 * pi * 1 * self.turn_rate)
-        return array([[x], [y], [0]])
+        current_direction = array([[x], [y], [0]],dtype=object)
+        return current_direction
 
     def set_parameters(self, turn_rate : float):
         self.turn_rate = turn_rate

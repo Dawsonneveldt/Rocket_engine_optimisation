@@ -60,11 +60,11 @@ EngineSetUp = {"Engine_type" : "PDE",
 ###PYGMO OPTIMISATION PARAMETERS###
     #TRAJECTORY OPTIMISATION
 trajectory_populations = 20
-trajectory_evolutions = 15
-guidance_nodes = 5
-time_nodes = 4
+trajectory_evolutions = 3
+guidance_nodes = 1
+time_nodes = 1
 altitude_nodes = "not yet implemented" #todo still needs to be build and considered
-mass_flow_nodes = 0
+mass_rate_nodes = 0
 
     #SIZING OPTIMISATION
 """
@@ -76,6 +76,9 @@ sizing_evolutions = "not yet implemented"
 
 
 ### todo : VEHICLE SIZING PARAMETERS ###
+# general aspects
+propellant_margin = 0.01 #% of proppellant stored for return and manouvering
+
     #falcon 9 sizing parameters
 M_0         = 549054.  #[kg]
 M_prop      = 4E+5  #[kg]

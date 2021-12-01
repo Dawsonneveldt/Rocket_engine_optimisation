@@ -66,6 +66,17 @@ Thrust_module = FalconEngineGuided(Rocket_motion_module.bodies,
                                    Rocket_motion_module.Rocket,
                                    M_0,
                                    M_prop)
+Thrust_module_falcon9 = Falcon9Engine(Rocket_motion_module.bodies,
+                                      Rocket_motion_module.Rocket,
+                                      M_0=M_0,
+                                      M_dry=M_dry)
+
+from Standard_Files.Standard_Engine_class import Standard_Engine
+standard_thrust_module = Standard_Engine(bodies=Rocket_motion_module.bodies,
+                                         Rocket=Rocket_motion_module.Rocket,
+                                         M_sytem_mass=M_dry,
+                                         M_propallant=M_prop)
+Thrust_module = standard_thrust_module
     ## CREATING THE AERODYNAMIC CLASS
     # todo no such class exists at the moment
 Aerodynamic_module = "to be developed"
@@ -73,7 +84,7 @@ Aerodynamic_module = "to be developed"
     ## PROVIDE THE SIZED CLASSES TO THE ROCKET MOTION MODULE
 Rocket_motion_module.set_thrust_model(ThrustMagnitude=Thrust_module.Thrust_Magnitude,
                                       Thrustguidance=Thrust_module.Thrust_Guidance,
-                                      ThrustISP=Thrust_module.IspThrust,
+                                      ThrustISP=Thrust_module.ISP_Magnitude,
                                       Thrust_class=Thrust_module
                                       )
 Rocket_motion_module.set_aerodynamic_model()
@@ -134,7 +145,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-printgraphs = True
+printgraphs = False
 if printgraphs == True:
     time_seconds = Rocket_motion_module.time_range
     carthersian_positions = Rocket_motion_module.current_states

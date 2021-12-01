@@ -8,6 +8,7 @@ from numpy import array, pi, zeros, ones
 from tudatpy.kernel.constants import GRAVITATIONAL_CONSTANT, JULIAN_DAY
 
 # SETUP INTERFACE
+from SetUp import M_prop, propellant_margin
 '''
 needed to ensure that the standard objects can be loaded in
 '''
@@ -424,10 +425,10 @@ class SSTOAscent:
 
 
         def set_bounds(self):
-            from SetUp import guidance_nodes, time_nodes, mass_flow_nodes, altitude_nodes, t_max_simulation
-            lower_bounds = list(zeros(guidance_nodes+mass_flow_nodes+time_nodes))
+            from SetUp import guidance_nodes, time_nodes, mass_rate_nodes, altitude_nodes, t_max_simulation
+            lower_bounds = list(zeros(guidance_nodes + mass_rate_nodes + time_nodes))
             upper_bounds = list(ones(guidance_nodes)*0.5*pi) \
-                        + list(ones(mass_flow_nodes)*self.ThrustClass_function().Rocket_M_prop*0.005)\
-                        + list(ones(time_nodes)*t_max_simulation*0.3/time_nodes) #todo change to t_previous iteration
+                        + list(ones(mass_rate_nodes) * M_prop * 0.001)\
+                        + list(ones(time_nodes)*t_max_simulation*0.3/time_nodes) #todo change to t_duration previous iteration and change mass limit
             return lower_bounds, upper_bounds
     # __________________________________________________________________________________________________________________
